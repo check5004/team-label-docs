@@ -118,7 +118,7 @@
                 <ul class="list-disc mt-2 space-y-1">
                     <li>タスクの<strong>種類</strong>と<strong>状態</strong>がひと目でわかる</li>
                     <li>誰が何を確認すべきかが明確になる（<strong>ボールの所在</strong>がわかる）</li>
-                    <li>対応の<strong>優先順位</strong>が明確になる</li>
+                    <li>対応の<strong>優先順位</strong>や<strong>難易度</strong>が明確になる</li>
                 </ul>
 
                 <h3 class="mt-8">2. ラベル運用の基本ルール</h3>
@@ -147,19 +147,19 @@
                 <!-- ▲▲▲ 具体例のUIを修正 ▲▲▲ -->
 
                 <h3 class="mt-8">3. タスクの進捗とStatusラベルの更新</h3>
-                <p>タスクの進捗に合わせて、<code>Status: 〇〇</code> ラベルを更新していきます。基本的な流れは以下の通りです。</p>
-                <div class="flow-chart">
-                    <div class="flow-item"><span class="flow-label" style="background-color: #EBEBEB;">ToDo (未着手)</span></div>
-                    <span class="text-gray-400 text-2xl font-light">→</span>
-                    <div class="flow-item"><span class="flow-label" style="background-color: #5BC0DE;">Doing (作業中)</span></div>
-                     <span class="text-gray-400 text-2xl font-light">→</span>
-                    <div class="flow-item"><span class="flow-label" style="background-color: #FFA500;">確認待ち</span></div>
-                    <span class="text-gray-400 text-2xl font-light">→</span>
-                    <div class="flow-item"><span class="flow-label" style="background-color: #228B22; color: white;">完了</span></div>
-                </div>
-                 <!-- ▼▼▼ 太字の表現を修正 ▼▼▼ -->
-                <p class="mt-4">特に <code>Status: 確認待ち</code> は、<strong>上司や依頼者に動作確認をお願いする段階</strong>で使用します。このラベルがついているIssueは、「開発者の手は離れ、確認者のボールになっている」ことを意味します。</p>
-                 <!-- ▲▲▲ 太字の表現を修正 ▲▲▲ -->
+                <p>タスクの進捗に合わせて、<code>Status: 〇〇</code> ラベルを更新していきます。「待ち」状態には主に3種類あるので注意してください。</p>
+                 <ul class="list-disc mt-2 space-y-1">
+                    <li><code>Status: レビュー待ち</code>: 開発者が**他の開発者に**コードレビューをお願いしている状態。（マージリクエスト運用で多用）</li>
+                    <li><code>Status: 確認待ち</code>: 開発者が**依頼者や上司に**動作確認をお願いしている状態。</li>
+                    <li><code>Status: 返信待ち</code>: 開発者が**起票者や関係者に**質問への回答を待っている状態。</li>
+                </ul>
+
+                <h3 class="mt-8">4. オプションラベルの活用</h3>
+                <p>必要に応じて、以下のカテゴリのラベルも活用してください。これらは必須ではありませんが、使うことでタスク管理がよりスムーズになります。</p>
+                 <ul class="list-disc mt-2 space-y-1">
+                    <li><code>Resolution: 〇〇</code>: Issueを「完了」以外の理由で閉じるときに、**なぜ閉じたのか**の理由を示します。（例：<code>Resolution: 重複</code>）</li>
+                    <li><code>Difficulty: 〇〇</code>: タスクの難易度を示します。新しいメンバーが参加した際、どのタスクから始めるべきかの良い目印になります。（例：<code>Difficulty: 低</code>）</li>
+                </ul>
             </section>
             <!-- ▲▲▲ ドキュメントセクション ▲▲▲ -->
 
@@ -198,7 +198,8 @@
                         { name: "Status: ToDo (未着手)", color: "#EBEBEB", desc: "これから着手するタスク。" },
                         { name: "Status: Doing (作業中)", color: "#5BC0DE", desc: "現在、誰かが作業を進めているタスク。" },
                         { name: "Status: レビュー待ち", color: "#FAD8C7", desc: "開発者によるコードレビュー待ちのタスク。" },
-                        { name: "Status: 確認待ち", color: "#FFA500", desc: "上司やお客様など、依頼者による動作確認待ちのタスク。" },
+                        { name: "Status: 確認待ち", color: "#FFA500", desc: "依頼者や上司による動作確認待ちの状態。" },
+                        { name: "Status: 返信待ち", color: "#D876E3", desc: "起票者や関係者からの情報提供を待っている状態。" },
                         { name: "Status: 完了", color: "#228B22", desc: "すべての作業が完了し、リリース可能なタスク。" },
                         { name: "Status: 保留", color: "#FFFFFF", desc: "何らかの理由で作業を中断・保留しているタスク。", border: true },
                     ]},
@@ -211,9 +212,19 @@
                 ]
             },
             {
-                category: "② 専門ラベルのテンプレート",
-                description: "プロジェクトの特性に応じて、必要であれば追加すると便利なラベルのテンプレートです。",
+                category: "② 専門・オプションラベル",
+                description: "プロジェクトの特性や状況に応じて、必要であれば追加すると便利なラベルのテンプレートです。",
                 labels: [
+                    { category_title: "解決方法 (Resolution)", items: [
+                        { name: "Resolution: 重複", color: "#CFD3D7", desc: "このIssueは、他の既存Issueと同じ内容です。" },
+                        { name: "Resolution: 無効", color: "#E4E669", desc: "報告内容が不正確、または再現できないIssue。" },
+                        { name: "Resolution: 対応しない", color: "#FFFFFF", desc: "仕様、または意図的な動作であり、修正しないと判断されたIssue。", border: true },
+                    ]},
+                    { category_title: "難易度 (Difficulty)", items: [
+                        { name: "Difficulty: 低", color: "#C2E0C6", desc: "軽微な修正など、プロジェクト初心者でも対応しやすいタスク。" },
+                        { name: "Difficulty: 中", color: "#7FFFD4", desc: "ある程度の仕様理解が必要な、標準的な難易度のタスク。" },
+                        { name: "Difficulty: 高", color: "#F8D7DA", desc: "複雑なロジックや広範囲への影響調査が必要な、高難易度のタスク。" },
+                    ]},
                     { category_title: "技術要素 (Component)", items: [
                         { name: "Component: フロントエンド", color: "#0088CC", desc: "ブラウザで表示・動作する部分のタスク。" },
                         { name: "Component: バックエンド", color: "#663399", desc: "サーバーサイドの処理やロジックに関するタスク。" },
@@ -332,12 +343,24 @@
 
             const { sectionIdx, subCategoryIdx, itemIdx } = cardWrapper.dataset;
             const label = labelData[sectionIdx].labels[subCategoryIdx].items[itemIdx];
+            const categoryTitle = labelData[sectionIdx].labels[subCategoryIdx].category_title; // カテゴリ名を取得
             const targetType = button.dataset.target;
 
             let contentToCopy;
-            if (targetType === 'name') contentToCopy = label.name;
-            else if (targetType === 'desc') contentToCopy = label.desc;
-            else if (targetType === 'color') contentToCopy = label.color;
+            if (targetType === 'name') {
+                contentToCopy = label.name;
+            } else if (targetType === 'desc') {
+                const match = categoryTitle.match(/(.+) \((.+)\)/);
+                let formattedCategory = categoryTitle;
+                if (match && match.length === 3) {
+                    const japaneseName = match[1];
+                    const englishName = match[2];
+                    formattedCategory = `【${englishName}: ${japaneseName}】`;
+                }
+                contentToCopy = `${label.desc}\n\n${formattedCategory}`;
+            } else if (targetType === 'color') {
+                contentToCopy = label.color;
+            }
 
             if (!contentToCopy) return;
 
