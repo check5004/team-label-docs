@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitLabラベル運用ドキュメント＆コピー支援ページ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans JP', 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+        .copy-btn {
+            transition: all 0.2s ease-in-out;
+        }
+        .copied {
+            background-color: #22c55e !important; /* green-500 */
+            color: white !important;
+            transform: scale(1.05);
+        }
+        .card-completed {
+            background-color: #f0fdf4; /* green-50 */
+            border: 1px solid #4ade80; /* green-400 */
+        }
+        /* ドキュメントセクションのスタイル */
+        .doc-section {
+            background-color: #f8fafc; /* slate-50 */
+            border: 1px solid #e2e8f0; /* slate-200 */
+            border-radius: 0.75rem;
+            padding: 2rem;
+            margin-bottom: 3rem;
+        }
+        .doc-section h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #cbd5e1; /* slate-300 */
+        }
+        .doc-section p, .doc-section li {
+            line-height: 1.8;
+            color: #334155; /* slate-700 */
+        }
+        .doc-section ul {
+            list-style-position: inside;
+            padding-left: 0.5rem;
+        }
+        .doc-section code {
+            background-color: #e2e8f0; /* slate-200 */
+            color: #475569; /* slate-600 */
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.25rem;
+            font-size: 0.9em;
+        }
+        /* ラベルチップUIのスタイル */
+        .label-chip-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-top: 0.5rem;
+        }
+        .label-chip {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+        .label-chip-color {
+            width: 0.75rem;
+            height: 0.75rem;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+
+        /* フローチャートのスタイル */
+        .flow-chart {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 1.5rem;
+        }
+        .flow-item {
+            display: flex;
+            align-items: center;
+        }
+        .flow-label {
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: #1e293b;
+            border: 1px solid #94a3b8;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <div class="container mx-auto px-4 py-8 md:py-12">
+        <header class="text-center mb-10">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-900">GitLabラベル運用ドキュメント</h1>
+            <p class="mt-3 text-lg text-gray-600">このページは、チームのラベル運用ルールを定義し、設定作業を支援するためのものです。</p>
+        </header>
+
+        <main id="main-content">
+            <!-- ▼▼▼ ドキュメントセクション ▼▼▼ -->
+            <section class="doc-section">
+                <h3>1. このドキュメントの目的</h3>
+                <p>このドキュメントは、プロジェクトのIssue（課題・タスク）を効率的に管理するためのラベルルールを定めたものです。全員がこのルールに従うことで、以下のメリットが生まれます。</p>
+                <ul class="list-disc mt-2 space-y-1">
+                    <li>タスクの<strong>種類</strong>と<strong>状態</strong>がひと目でわかる</li>
+                    <li>誰が何を確認すべきかが明確になる（<strong>ボールの所在</strong>がわかる）</li>
+                    <li>対応の<strong>優先順位</strong>が明確になる</li>
+                </ul>
+
+                <h3 class="mt-8">2. ラベル運用の基本ルール</h3>
+                <p>新しくIssueを作成するときは、原則として以下のカテゴリから**それぞれ1つずつ**ラベルを選択してください。</p>
+                <ul class="list-disc mt-2 space-y-1">
+                    <li><code>Type: 〇〇</code> : これから行う作業の種類</li>
+                    <li><code>Status: 〇〇</code> : タスクの現在の進捗状況</li>
+                    <li><code>Priority: 〇〇</code> : タスクの緊急度・重要度</li>
+                </ul>
+                <p class="mt-4">例えば、「顧客管理機能の軽微なバグを至急修正する」というタスクであれば、以下のようなラベルを最初に設定します。</p>
+                <!-- ▼▼▼ 具体例のUIを修正 ▼▼▼ -->
+                <div class="label-chip-container mt-3">
+                    <span class="label-chip" style="background-color: #fbeeee; color: #c53030;">
+                        <span class="label-chip-color" style="background-color: #D9534F;"></span>
+                        Type: 不具合
+                    </span>
+                    <span class="label-chip" style="background-color: #f7fafc; color: #4a5568;">
+                        <span class="label-chip-color" style="background-color: #EBEBEB; border: 1px solid #ccc;"></span>
+                        Status: ToDo (未着手)
+                    </span>
+                    <span class="label-chip" style="background-color: #fff5f5; color: #c53030;">
+                         <span class="label-chip-color" style="background-color: #FF0000;"></span>
+                        Priority: 1-緊急
+                    </span>
+                </div>
+                <!-- ▲▲▲ 具体例のUIを修正 ▲▲▲ -->
+
+                <h3 class="mt-8">3. タスクの進捗とStatusラベルの更新</h3>
+                <p>タスクの進捗に合わせて、<code>Status: 〇〇</code> ラベルを更新していきます。基本的な流れは以下の通りです。</p>
+                <div class="flow-chart">
+                    <div class="flow-item"><span class="flow-label" style="background-color: #EBEBEB;">ToDo (未着手)</span></div>
+                    <span class="text-gray-400 text-2xl font-light">→</span>
+                    <div class="flow-item"><span class="flow-label" style="background-color: #5BC0DE;">Doing (作業中)</span></div>
+                     <span class="text-gray-400 text-2xl font-light">→</span>
+                    <div class="flow-item"><span class="flow-label" style="background-color: #FFA500;">確認待ち</span></div>
+                    <span class="text-gray-400 text-2xl font-light">→</span>
+                    <div class="flow-item"><span class="flow-label" style="background-color: #228B22; color: white;">完了</span></div>
+                </div>
+                 <!-- ▼▼▼ 太字の表現を修正 ▼▼▼ -->
+                <p class="mt-4">特に <code>Status: 確認待ち</code> は、<strong>上司や依頼者に動作確認をお願いする段階</strong>で使用します。このラベルがついているIssueは、「開発者の手は離れ、確認者のボールになっている」ことを意味します。</p>
+                 <!-- ▲▲▲ 太字の表現を修正 ▲▲▲ -->
+            </section>
+            <!-- ▲▲▲ ドキュメントセクション ▲▲▲ -->
+
+            <div class="text-center mb-12">
+                <h2 class="text-2xl md:text-3xl font-bold text-gray-800">ラベル一覧・コピーエリア</h2>
+                <p class="mt-2 text-gray-600">以下のボタンを使って、GitLabにラベルを設定してください。<br>3項目すべてコピーするとカードの色が変わり、作業進捗がわかります。</p>
+            </div>
+
+            <div id="label-sections" class="space-y-12">
+                <!-- Label sections will be injected here by JavaScript -->
+            </div>
+        </main>
+
+        <footer class="text-center mt-16 text-gray-500">
+            <p>&copy; GitLab Label Helper. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script>
+        // --- データ定義 ---
+        const labelData = [
+            {
+                category: "① 汎用ラベルセット",
+                description: "すべてのプロジェクトで共通して設定することをおすすめする、基本的なラベルのセットです。",
+                labels: [
+                    { category_title: "種類 (Type)", items: [
+                        { name: "Type: 機能追加", color: "#5CB85C", desc: "新しい機能の開発・実装。" },
+                        { name: "Type: 改修", color: "#428BCA", desc: "既存機能の変更・改善。" },
+                        { name: "Type: 不具合", color: "#D9534F", desc: "バグや意図しない動作の修正。" },
+                        { name: "Type: 問い合わせ/調査", color: "#785549", desc: "お客様や社内からの質問・調査依頼。" },
+                        { name: "Type: デザイン", color: "#9B59B6", desc: "画面デザインやUI/UXの作成・修正。" },
+                        { name: "Type: インフラ", color: "#34495E", desc: "サーバー構築、ミドルウェア設定など。" },
+                        { name: "Type: ドキュメント", color: "#F0AD4E", desc: "仕様書、マニュアルなどの作成・更新。" },
+                    ]},
+                    { category_title: "状態 (Status)", items: [
+                        { name: "Status: ToDo (未着手)", color: "#EBEBEB", desc: "これから着手するタスク。" },
+                        { name: "Status: Doing (作業中)", color: "#5BC0DE", desc: "現在、誰かが作業を進めているタスク。" },
+                        { name: "Status: レビュー待ち", color: "#FAD8C7", desc: "開発者によるコードレビュー待ちのタスク。" },
+                        { name: "Status: 確認待ち", color: "#FFA500", desc: "上司やお客様など、依頼者による動作確認待ちのタスク。" },
+                        { name: "Status: 完了", color: "#228B22", desc: "すべての作業が完了し、リリース可能なタスク。" },
+                        { name: "Status: 保留", color: "#FFFFFF", desc: "何らかの理由で作業を中断・保留しているタスク。", border: true },
+                    ]},
+                    { category_title: "優先度 (Priority)", items: [
+                        { name: "Priority: 1-緊急", color: "#FF0000", desc: "最優先。すぐに作業を中断してでも対応すべきタスク。" },
+                        { name: "Priority: 2-高い", color: "#ED5121", desc: "優先的に対応すべき重要なタスク。" },
+                        { name: "Priority: 3-普通", color: "#FBCA04", desc: "通常の優先度のタスク。" },
+                        { name: "Priority: 4-低い", color: "#CCCCCC", desc: "急がない、時間がある時に対応するタスク。" },
+                    ]}
+                ]
+            },
+            {
+                category: "② 専門ラベルのテンプレート",
+                description: "プロジェクトの特性に応じて、必要であれば追加すると便利なラベルのテンプレートです。",
+                labels: [
+                    { category_title: "技術要素 (Component)", items: [
+                        { name: "Component: フロントエンド", color: "#0088CC", desc: "ブラウザで表示・動作する部分のタスク。" },
+                        { name: "Component: バックエンド", color: "#663399", desc: "サーバーサイドの処理やロジックに関するタスク。" },
+                        { name: "Component: データベース", color: "#E67E22", desc: "データの構造や保存に関するタスク。" },
+                    ]},
+                    { category_title: "影響範囲 (Scope)", items: [
+                        { name: "Scope: 大", color: "#D11F5E", desc: "複数機能にまたがる大規模な改修・追加。" },
+                        { name: "Scope: 中", color: "#B04D8C", desc: "1つの機能全体に関わる中規模なタスク。" },
+                        { name: "Scope: 小 (軽微な修正)", color: "#6A6A6A", desc: "テキスト修正や簡単なCSS調整など、影響範囲の小さい修正。" },
+                    ]}
+                ]
+            }
+        ];
+
+        // --- 初期化処理 ---
+        labelData.forEach(section => {
+            section.labels.forEach(subCategory => {
+                subCategory.items.forEach(item => {
+                    item.copied = { name: false, desc: false, color: false };
+                });
+            });
+        });
+
+        const mainContainer = document.getElementById('label-sections');
+
+        // --- DOM生成 ---
+        function renderLabels() {
+            mainContainer.innerHTML = '';
+            labelData.forEach((section, sectionIdx) => {
+                const sectionDiv = document.createElement('div');
+                sectionDiv.innerHTML = `
+                    <div>
+                        <h3 class="text-2xl font-bold text-gray-800">${section.category}</h3>
+                        <p class="mt-1 text-gray-600">${section.description}</p>
+                    </div>
+                `;
+
+                section.labels.forEach((subCategory, subCategoryIdx) => {
+                    const subCategoryTitle = document.createElement('h4');
+                    subCategoryTitle.className = "text-lg font-semibold mt-6 mb-4 ml-1 text-gray-700";
+                    subCategoryTitle.textContent = subCategory.category_title;
+                    sectionDiv.appendChild(subCategoryTitle);
+
+                    const gridDiv = document.createElement('div');
+                    gridDiv.className = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6";
+
+                    subCategory.items.forEach((label, itemIdx) => {
+                        const borderClass = label.border ? 'border border-gray-300' : '';
+
+                        const cardWrapper = document.createElement('div');
+                        cardWrapper.className = 'card-wrapper bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-all duration-300';
+                        cardWrapper.dataset.sectionIdx = sectionIdx;
+                        cardWrapper.dataset.subCategoryIdx = subCategoryIdx;
+                        cardWrapper.dataset.itemIdx = itemIdx;
+
+                        cardWrapper.innerHTML = `
+                            <div class="p-5">
+                                <div class="flex items-center justify-between mb-4">
+                                    <div class="flex items-center min-w-0">
+                                        <span class="w-5 h-5 rounded-full flex-shrink-0 ${borderClass}" style="background-color: ${label.color};"></span>
+                                        <p class="ml-3 font-semibold text-gray-900 truncate">${label.name}</p>
+                                    </div>
+                                    <button class="copy-btn text-sm bg-gray-200 text-gray-700 hover:bg-gray-300 font-medium py-1 px-3 rounded-full flex-shrink-0" data-target="name">コピー</button>
+                                </div>
+
+                                <div class="flex items-start justify-between py-3 border-t">
+                                    <div class="flex-1 pr-4 min-w-0">
+                                        <p class="text-sm text-gray-600">説明:</p>
+                                        <p class="text-sm font-mono text-gray-800 break-words">${label.desc}</p>
+                                    </div>
+                                    <button class="copy-btn text-sm bg-gray-200 text-gray-700 hover:bg-gray-300 font-medium py-1 px-3 rounded-full flex-shrink-0" data-target="desc">コピー</button>
+                                </div>
+
+                                <div class="flex items-center justify-between pt-3 border-t">
+                                    <div class="flex-1 pr-4 min-w-0">
+                                         <p class="text-sm text-gray-600">カラーコード:</p>
+                                         <p class="text-sm font-mono text-gray-800">${label.color}</p>
+                                    </div>
+                                    <button class="copy-btn text-sm bg-gray-200 text-gray-700 hover:bg-gray-300 font-medium py-1 px-3 rounded-full flex-shrink-0" data-target="color">コピー</button>
+                                </div>
+                            </div>
+                        `;
+                        gridDiv.appendChild(cardWrapper);
+                    });
+                    sectionDiv.appendChild(gridDiv);
+                });
+                mainContainer.appendChild(sectionDiv);
+            });
+        }
+
+        // --- イベント処理 ---
+        function copyToClipboard(textToCopy) {
+            const textarea = document.createElement('textarea');
+            textarea.value = textToCopy;
+            textarea.style.position = 'fixed';
+            textarea.style.left = '-9999px';
+            document.body.appendChild(textarea);
+            textarea.select();
+            let success = false;
+            try {
+                success = document.execCommand('copy');
+            } catch (err) {
+                console.error('コピーに失敗しました: ', err);
+                success = false;
+            }
+            document.body.removeChild(textarea);
+            return success;
+        }
+
+        function handleCopy(e) {
+            if (!e.target.classList.contains('copy-btn')) return;
+
+            const button = e.target;
+            const cardWrapper = button.closest('.card-wrapper');
+            if (!cardWrapper) return;
+
+            const { sectionIdx, subCategoryIdx, itemIdx } = cardWrapper.dataset;
+            const label = labelData[sectionIdx].labels[subCategoryIdx].items[itemIdx];
+            const targetType = button.dataset.target;
+
+            let contentToCopy;
+            if (targetType === 'name') contentToCopy = label.name;
+            else if (targetType === 'desc') contentToCopy = label.desc;
+            else if (targetType === 'color') contentToCopy = label.color;
+
+            if (!contentToCopy) return;
+
+            const success = copyToClipboard(contentToCopy);
+
+            if (success) {
+                label.copied[targetType] = true;
+                updateCardState(cardWrapper, label);
+                const originalText = button.textContent;
+                button.textContent = 'コピー完了!';
+                button.classList.add('copied');
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.classList.remove('copied');
+                }, 1500);
+            } else {
+                 console.error('コピーに失敗しました。');
+                 button.textContent = '失敗';
+                 setTimeout(() => {
+                    button.textContent = 'コピー';
+                }, 2000);
+            }
+        }
+
+        function updateCardState(cardElement, label) {
+            const { name, desc, color } = label.copied;
+            if (name && desc && color) {
+                cardElement.classList.add('card-completed');
+            }
+        }
+
+        // --- 実行 ---
+        renderLabels();
+        mainContainer.addEventListener('click', handleCopy);
+
+    </script>
+</body>
+</html>
